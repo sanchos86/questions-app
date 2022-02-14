@@ -2,6 +2,7 @@ import { Module, Global } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import databaseConfig from '../config/database-config';
+import { PaginationModule } from '../pagination/pagination.module';
 
 @Global()
 @Module({
@@ -9,7 +10,8 @@ import databaseConfig from '../config/database-config';
     ConfigModule.forRoot({
       load: [databaseConfig],
     }),
+    PaginationModule,
   ],
-  exports: [ConfigModule],
+  exports: [ConfigModule, PaginationModule],
 })
 export class CoreModule {}

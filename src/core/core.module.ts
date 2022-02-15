@@ -1,5 +1,6 @@
 import { Module, Global } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 import databaseConfig from '../config/database-config';
 import { PaginationModule } from '../pagination/pagination.module';
@@ -11,7 +12,14 @@ import { PaginationModule } from '../pagination/pagination.module';
       load: [databaseConfig],
     }),
     PaginationModule,
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        ttl: Number(configService.get('THROTTLE_TTL')),
+        limit: Number(configService.get('THROTTLE_LIMIT')),
+      }),
+    }),
   ],
-  exports: [ConfigModule, PaginationModule],
+  exports: [ConfigModule, PaginationModule, ThrottlerModule],
 })
 export class CoreModule {}

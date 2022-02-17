@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+
+import { Question } from '../../question/entities/question.entity';
 
 @Entity({ name: 'categories', orderBy: { id: 'DESC' } })
 export class Category {
@@ -7,4 +9,7 @@ export class Category {
 
   @Column({ unique: true })
   name: string;
+
+  @OneToMany(() => Question, (question) => question.category)
+  questions: Question[];
 }

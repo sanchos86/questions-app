@@ -1,9 +1,18 @@
 import { Exclude } from 'class-transformer';
-import { BeforeInsert, Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  OneToMany,
+} from 'typeorm';
 import { compare, hash } from 'bcrypt';
 
 import { UserRole } from '../enums/user-role.enum';
 import { UserStatus } from '../enums/user-status.enum';
+import { Question } from '../../question/entities/question.entity';
 
 @Entity({ name: 'users', orderBy: { id: 'DESC' } })
 export class User {
@@ -43,6 +52,9 @@ export class User {
 
   @DeleteDateColumn({ nullable: true, default: null })
   deletedAt: Date;
+
+  @OneToMany(() => Question, (question) => question.user)
+  questions: Question[];
 
   @BeforeInsert()
   async hashPassword() {

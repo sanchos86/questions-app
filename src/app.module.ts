@@ -8,6 +8,7 @@ import { CoreModule } from './core/core.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { CategoryModule } from './category/category.module';
+import { QuestionModule } from './question/question.module';
 import { DATABASE_CONFIG } from './config/database-config';
 import { JwtStrategy } from './auth/passport/jwt/jwt.strategy';
 
@@ -23,6 +24,7 @@ import { JwtStrategy } from './auth/passport/jwt/jwt.strategy';
     AuthModule,
     UserModule,
     CategoryModule,
+    QuestionModule,
   ],
   controllers: [],
   providers: [

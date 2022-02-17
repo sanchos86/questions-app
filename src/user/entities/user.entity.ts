@@ -1,13 +1,6 @@
 import { Exclude } from 'class-transformer';
-import {
-  BeforeInsert,
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { hash, compare } from 'bcrypt';
+import { BeforeInsert, Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { compare, hash } from 'bcrypt';
 
 import { UserRole } from '../enums/user-role.enum';
 import { UserStatus } from '../enums/user-status.enum';
@@ -58,5 +51,11 @@ export class User {
 
   comparePassword(password: string): Promise<boolean> {
     return compare(password, this.password);
+  }
+
+  get isConfirmed() {
+    return (
+      this.confirmationToken === null && this.status === UserStatus.CONFIRMED
+    );
   }
 }

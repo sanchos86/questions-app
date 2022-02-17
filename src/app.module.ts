@@ -2,8 +2,11 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExtractJwt, StrategyOptions } from 'passport-jwt';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { CoreModule } from './core/core.module';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 import { DATABASE_CONFIG } from './config/database-config';
 import { JwtStrategy } from './auth/passport/jwt/jwt.strategy';
 
@@ -15,6 +18,9 @@ import { JwtStrategy } from './auth/passport/jwt/jwt.strategy';
       useFactory: (configService: ConfigService) =>
         configService.get(DATABASE_CONFIG),
     }),
+    EventEmitterModule.forRoot(),
+    AuthModule,
+    UserModule,
   ],
   controllers: [],
   providers: [

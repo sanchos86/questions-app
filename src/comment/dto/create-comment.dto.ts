@@ -2,13 +2,13 @@ import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateCommentDto {
   @IsNotEmpty()
-  text: string;
+  readonly text: string;
 
   @IsNumber()
   @IsNotEmpty()
-  questionId: number;
+  readonly questionId: number;
 
   @IsOptional()
   @IsNumber()
-  parentCommentId: number;
+  readonly parentCommentId: number;
 }

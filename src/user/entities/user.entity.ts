@@ -13,6 +13,7 @@ import { compare, hash } from 'bcrypt';
 import { UserRole } from '../enums/user-role.enum';
 import { UserStatus } from '../enums/user-status.enum';
 import { Question } from '../../question/entities/question.entity';
+import { Comment } from '../../comment/entities/comment.entity';
 
 @Entity({ name: 'users', orderBy: { id: 'DESC' } })
 export class User {
@@ -55,6 +56,9 @@ export class User {
 
   @OneToMany(() => Question, (question) => question.user)
   questions: Question[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 
   @BeforeInsert()
   async hashPassword() {

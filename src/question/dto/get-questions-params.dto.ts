@@ -4,8 +4,8 @@ import { PaginationParamsDto } from '../../pagination/dto/pagination-params.dto'
 
 export class GetQuestionsParamsDto extends PaginationParamsDto {
   @Type(() => Number)
-  userId?: number;
+  readonly userId?: number;
 
   @Type(() => Number)
-  categoryId?: number;
+  readonly categoryId?: number;
 }

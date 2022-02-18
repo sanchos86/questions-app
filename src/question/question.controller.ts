@@ -6,6 +6,7 @@ import {
   Body,
   Query,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 
 import { User } from '../user/entities/user.entity';
@@ -24,7 +25,8 @@ export class QuestionController {
 
   @Get()
   findAll(
-    @Query() params: GetQuestionsParamsDto,
+    @Query(new ValidationPipe({ transform: true }))
+    params: GetQuestionsParamsDto,
   ): Promise<PaginationResultInterface<Question>> {
     return this.questionService.findAll(params);
   }

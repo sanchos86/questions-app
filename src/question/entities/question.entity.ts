@@ -1,7 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 
 import { User } from '../../user/entities/user.entity';
 import { Category } from '../../category/entities/category.entity';
+import { Comment } from '../../comment/entities/comment.entity';
 
 @Entity({ name: 'questions', orderBy: { id: 'DESC' } })
 export class Question {
@@ -28,4 +35,7 @@ export class Question {
 
   @ManyToOne(() => Category, (category) => category.questions)
   category: Category;
+
+  @OneToMany(() => Comment, (comment) => comment.question)
+  comments: Comment[];
 }

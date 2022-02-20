@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { User } from './entities/user.entity';
 import { RegisterDto } from '../auth/dto/register.dto';
 import { UserStatus } from './enums/user-status.enum';
+import { UserRole } from './enums/user-role.enum';
 
 @Injectable()
 export class UserService {
@@ -68,5 +69,26 @@ export class UserService {
     });
 
     await this.userRepository.save(user);
+  }
+
+  async findOne(
+    currentUserId: number,
+    currentUserRole: string,
+    userId: string,
+  ): Promise<User> {
+    if (
+      currentUserId === Number(userId) ||
+      currentUserRole === UserRole.ADMIN
+    ) {
+      const user = await this.userRepository.findOne(userId);
+
+      if (!user) {
+        throw new NotFoundException();
+      }
+
+      return user;
+    } else {
+      throw new ForbiddenException();
+    }
   }
 }

@@ -7,7 +7,8 @@ import {
   UseGuards,
   Patch,
   Param,
-  ValidationPipe, Delete
+  ValidationPipe,
+  Delete,
 } from '@nestjs/common';
 
 import { User } from '../user/entities/user.entity';

@@ -7,6 +7,7 @@ import {
   Query,
   UseGuards,
   ValidationPipe,
+  Delete,
 } from '@nestjs/common';
 
 import { User } from '../user/entities/user.entity';
@@ -47,5 +48,27 @@ export class QuestionController {
     createQuestionDto: CreateQuestionDto,
   ): Promise<Question> {
     return this.questionService.create(currentUser.id, createQuestionDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/like')
+  like(
+    @CurrentUser()
+    currentUser: User,
+    @Param('id')
+    questionId: string,
+  ): Promise<void> {
+    return this.questionService.like(currentUser.id, questionId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id/like')
+  dislike(
+    @CurrentUser()
+    currentUser: User,
+    @Param('id')
+    questionId: string,
+  ): Promise<void> {
+    return this.questionService.dislike(currentUser.id, questionId);
   }
 }

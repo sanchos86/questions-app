@@ -1,7 +1,7 @@
 import {
-  BadRequestException,
+  BadRequestException, ForbiddenException,
   Injectable,
-  NotFoundException,
+  NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getRepository } from 'typeorm';
@@ -9,6 +9,7 @@ import { Repository, getRepository } from 'typeorm';
 import { Category } from '../category/entities/category.entity';
 import { User } from '../user/entities/user.entity';
 import { Question } from './entities/question.entity';
+import { QuestionLike } from '../like/entities/question-like.entity';
 import { GetQuestionsParamsDto } from './dto/get-questions-params.dto';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { PaginationParamsDto } from '../pagination/dto/pagination-params.dto';
@@ -24,6 +25,8 @@ export class QuestionService {
     private readonly categoryRepository: Repository<Category>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(QuestionLike)
+    private readonly questionLikeRepository: Repository<QuestionLike>,
     private readonly paginationService: PaginationService,
   ) {}
 
@@ -80,5 +83,55 @@ export class QuestionService {
     });
 
     return this.questionRepository.save(question);
+  }
+
+  async like(currentUserId: number, questionId: string): Promise<void> {
+    const question = await this.questionRepository.findOne(questionId, {
+      relations: ['user', 'likes'],
+    });
+
+    if (!question) {
+      throw new NotFoundException();
+    }
+
+    if (question.user.id === currentUserId) {
+      throw new ForbiddenException(
+        'You are not allowed to like your own questions',
+      );
+    }
+
+    const currentUserQuestionLike = question.likes.find(
+      (questionLike) => questionLike.user.id === currentUserId,
+    );
+
+    if (currentUserQuestionLike) {
+      throw new ForbiddenException('You have already liked current question');
+    }
+
+    const user = await this.userRepository.findOne(currentUserId);
+
+    const questionLike = this.questionLikeRepository.create({
+      question,
+      user,
+    });
+    await this.questionLikeRepository.save(questionLike);
+  }
+
+  async dislike(currentUserId: number, questionId: string): Promise<void> {
+    const question = await this.questionRepository.findOne(questionId, {
+      relations: ['likes'],
+    });
+
+    if (!question) {
+      throw new NotFoundException();
+    }
+
+    const currentUserQuestionLike = question.likes.find(
+      (questionLike) => questionLike.user.id === currentUserId,
+    );
+
+    if (currentUserQuestionLike) {
+      await this.questionLikeRepository.remove(currentUserQuestionLike);
+    }
   }
 }

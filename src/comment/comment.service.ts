@@ -15,6 +15,7 @@ import { PaginationResultInterface } from '../pagination/interfaces';
 import { PaginationParamsDto } from '../pagination/dto/pagination-params.dto';
 import { GetCommentsParamsDto } from './dto/get-comments-params.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { CommentLike } from '../like/entities/comment-like.entity';
 
 @Injectable()
 export class CommentService {
@@ -25,6 +26,8 @@ export class CommentService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Question)
     private readonly questionRepository: Repository<Question>,
+    @InjectRepository(CommentLike)
+    private readonly commentLikeRepository: Repository<CommentLike>,
     private readonly paginationService: PaginationService,
   ) {}
 
@@ -114,5 +117,55 @@ export class CommentService {
     }
 
     await this.commentRepository.softRemove(comment);
+  }
+
+  async like(currentUserId: number, commentId: string): Promise<void> {
+    const comment = await this.commentRepository.findOne(commentId, {
+      relations: ['user', 'likes'],
+    });
+
+    if (!comment) {
+      throw new NotFoundException();
+    }
+
+    if (comment.user.id === currentUserId) {
+      throw new ForbiddenException(
+        'You are not allowed to like your own comments',
+      );
+    }
+
+    const currentUserQuestionLike = comment.likes.find(
+      (questionLike) => questionLike.user.id === currentUserId,
+    );
+
+    if (currentUserQuestionLike) {
+      throw new ForbiddenException('You have already liked current comment');
+    }
+
+    const user = await this.userRepository.findOne(currentUserId);
+
+    const commentLike = this.commentLikeRepository.create({
+      comment,
+      user,
+    });
+    await this.commentLikeRepository.save(commentLike);
+  }
+
+  async dislike(currentUserId: number, commentId: string): Promise<void> {
+    const comment = await this.commentRepository.findOne(commentId, {
+      relations: ['likes'],
+    });
+
+    if (!comment) {
+      throw new NotFoundException();
+    }
+
+    const currentUserCommentLike = comment.likes.find(
+      (commentLike) => commentLike.user.id === currentUserId,
+    );
+
+    if (currentUserCommentLike) {
+      await this.commentLikeRepository.remove(currentUserCommentLike);
+    }
   }
 }

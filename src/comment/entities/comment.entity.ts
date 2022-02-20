@@ -6,10 +6,12 @@ import {
   OneToOne,
   JoinColumn,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { Question } from '../../question/entities/question.entity';
 import { User } from '../../user/entities/user.entity';
+import { CommentLike } from '../../like/entities/comment-like.entity';
 
 @Entity({ name: 'comments', orderBy: { id: 'DESC' } })
 export class Comment {
@@ -31,4 +33,7 @@ export class Comment {
   @OneToOne(() => Comment, { nullable: true })
   @JoinColumn()
   parentComment: Comment;
+
+  @OneToMany(() => CommentLike, (like) => like.comment)
+  likes: CommentLike[];
 }

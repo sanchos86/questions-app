@@ -14,6 +14,7 @@ import { UserRole } from '../enums/user-role.enum';
 import { UserStatus } from '../enums/user-status.enum';
 import { Question } from '../../question/entities/question.entity';
 import { Comment } from '../../comment/entities/comment.entity';
+import { Like } from '../../like/entities/like.entity';
 
 @Entity({ name: 'users', orderBy: { id: 'DESC' } })
 export class User {
@@ -59,6 +60,9 @@ export class User {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
+
+  @OneToMany(() => Like, (like) => like.user)
+  likes: Like[];
 
   @BeforeInsert()
   async hashPassword() {

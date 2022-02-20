@@ -7,7 +7,7 @@ import {
   UseGuards,
   Patch,
   Param,
-  ValidationPipe,
+  ValidationPipe, Delete
 } from '@nestjs/common';
 
 import { User } from '../user/entities/user.entity';
@@ -50,5 +50,27 @@ export class CommentController {
     @Param('id') commentId: string,
   ): Promise<void> {
     return this.commentService.delete(currentUser.id, commentId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/like')
+  like(
+    @CurrentUser()
+    currentUser: User,
+    @Param('id')
+    commentId: string,
+  ): Promise<void> {
+    return this.commentService.like(currentUser.id, commentId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id/like')
+  dislike(
+    @CurrentUser()
+    currentUser: User,
+    @Param('id')
+    commentId: string,
+  ): Promise<void> {
+    return this.commentService.dislike(currentUser.id, commentId);
   }
 }

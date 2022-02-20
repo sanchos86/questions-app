@@ -9,6 +9,7 @@ import {
 import { User } from '../../user/entities/user.entity';
 import { Category } from '../../category/entities/category.entity';
 import { Comment } from '../../comment/entities/comment.entity';
+import { QuestionLike } from '../../like/entities/question-like.entity';
 
 @Entity({ name: 'questions', orderBy: { id: 'DESC' } })
 export class Question {
@@ -38,4 +39,7 @@ export class Question {
 
   @OneToMany(() => Comment, (comment) => comment.question)
   comments: Comment[];
+
+  @OneToMany(() => QuestionLike, (like) => like.question)
+  likes: QuestionLike[];
 }

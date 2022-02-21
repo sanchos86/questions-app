@@ -7,6 +7,8 @@ import {
   JoinColumn,
   DeleteDateColumn,
   OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { Question } from '../../question/entities/question.entity';
@@ -36,4 +38,10 @@ export class Comment {
 
   @OneToMany(() => CommentLike, (like) => like.comment)
   likes: CommentLike[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

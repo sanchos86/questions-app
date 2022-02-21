@@ -36,8 +36,9 @@ export class QuestionService {
   ): Promise<PaginationResultInterface<Question>> {
     const { page } = params;
     const paginationParams: PaginationParamsDto = { page };
-    const queryBuilder =
-      this.questionRepository.createQueryBuilder('questions');
+    const queryBuilder = this.questionRepository
+      .createQueryBuilder('questions')
+      .leftJoinAndSelect('questions.user', 'user');
 
     if (params.categoryId) {
       queryBuilder.where('questions.categoryId = :categoryId', {

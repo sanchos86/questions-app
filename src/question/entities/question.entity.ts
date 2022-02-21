@@ -4,6 +4,8 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { User } from '../../user/entities/user.entity';
@@ -42,4 +44,10 @@ export class Question {
 
   @OneToMany(() => QuestionLike, (like) => like.question)
   likes: QuestionLike[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

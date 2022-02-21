@@ -1,10 +1,11 @@
 import {
-  BadRequestException, ForbiddenException,
+  BadRequestException,
+  ForbiddenException,
   Injectable,
-  NotFoundException
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, getRepository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { Category } from '../category/entities/category.entity';
 import { User } from '../user/entities/user.entity';
@@ -36,7 +37,7 @@ export class QuestionService {
     const { page } = params;
     const paginationParams: PaginationParamsDto = { page };
     const queryBuilder =
-      getRepository(Question).createQueryBuilder('questions');
+      this.questionRepository.createQueryBuilder('questions');
 
     if (params.categoryId) {
       queryBuilder.where('questions.categoryId = :categoryId', {

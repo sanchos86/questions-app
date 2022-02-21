@@ -1,13 +1,35 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  UseGuards,
+  ValidationPipe,
+  Query,
+} from '@nestjs/common';
 
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '../auth/passport/jwt/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { UserRole } from './enums/user-role.enum';
+import { Roles } from '../common/decorators/roles.decorator';
+import { PaginationResultInterface } from '../pagination/interfaces';
+import { GetUsersParamsDto } from './dto/get-users-params.dto';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get()
+  @Roles(UserRole.ADMIN)
+  findAll(
+    @Query(new ValidationPipe({ transform: true }))
+    params: GetUsersParamsDto,
+  ): Promise<PaginationResultInterface<User>> {
+    return this.userService.findAll(params);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')

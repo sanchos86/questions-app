@@ -1,4 +1,9 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
@@ -8,6 +13,10 @@ import { User } from './entities/user.entity';
 import { RegisterDto } from '../auth/dto/register.dto';
 import { UserStatus } from './enums/user-status.enum';
 import { UserRole } from './enums/user-role.enum';
+import { PaginationResultInterface } from '../pagination/interfaces';
+import { PaginationParamsDto } from '../pagination/dto/pagination-params.dto';
+import { PaginationService } from '../pagination/pagination.service';
+import { GetUsersParamsDto } from './dto/get-users-params.dto';
 
 @Injectable()
 export class UserService {
@@ -16,6 +25,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly paginationService: PaginationService,
   ) {}
 
   createUser(registerDto: RegisterDto): Promise<User> {
@@ -90,5 +100,19 @@ export class UserService {
     } else {
       throw new ForbiddenException();
     }
+  }
+
+  async findAll(
+    params: GetUsersParamsDto,
+  ): Promise<PaginationResultInterface<User>> {
+    const { page, withDeleted } = params;
+    const paginationParams: PaginationParamsDto = { page };
+    const queryBuilder = this.userRepository.createQueryBuilder('users');
+
+    if (withDeleted) {
+      queryBuilder.withDeleted();
+    }
+
+    return this.paginationService.paginate(queryBuilder, paginationParams);
   }
 }

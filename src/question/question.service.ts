@@ -38,10 +38,12 @@ export class QuestionService {
     const paginationParams: PaginationParamsDto = { page };
     const queryBuilder = this.questionRepository
       .createQueryBuilder('questions')
-      .leftJoinAndSelect('questions.user', 'user');
+      .withDeleted()
+      .leftJoinAndSelect('questions.user', 'user')
+      .where('user.deletedAt is null');
 
     if (params.categoryId) {
-      queryBuilder.where('questions.categoryId = :categoryId', {
+      queryBuilder.andWhere('questions.categoryId = :categoryId', {
         categoryId: params.categoryId,
       });
     }

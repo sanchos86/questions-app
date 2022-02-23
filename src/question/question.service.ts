@@ -40,6 +40,8 @@ export class QuestionService {
       .createQueryBuilder('questions')
       .withDeleted()
       .leftJoinAndSelect('questions.user', 'user')
+      .leftJoinAndSelect('questions.likes', 'like')
+      .leftJoinAndSelect('like.user', 'likeUser')
       .where('user.deletedAt is null');
 
     if (params.categoryId) {
@@ -58,7 +60,9 @@ export class QuestionService {
   }
 
   async findOne(questionId: string): Promise<Question> {
-    const question = await this.questionRepository.findOne(questionId);
+    const question = await this.questionRepository.findOne(questionId, {
+      relations: ['category', 'user', 'likes', 'comments'],
+    });
 
     if (!question) {
       throw new NotFoundException();

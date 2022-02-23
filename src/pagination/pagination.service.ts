@@ -14,7 +14,7 @@ export class PaginationService {
     params: PaginationParamsDto,
   ): Promise<PaginationResultInterface<T>> {
     const page = Number.isInteger(params.page) ? params.page : 1;
-    const perPage = Number.isInteger(params.page)
+    const perPage = Number.isInteger(params.perPage)
       ? params.perPage
       : Number(this.configService.get('PER_PAGE'));
     const offset = (page - 1) * perPage;
@@ -34,7 +34,9 @@ export class PaginationService {
       take: perPage,
     });
 
-    return { entities, total };
+    const totalPages = Math.ceil(total / perPage);
+
+    return { entities, total, totalPages };
   }
 
   async paginateQueryBuilder<T>(
@@ -47,6 +49,8 @@ export class PaginationService {
       .skip(offset)
       .getManyAndCount();
 
-    return { entities, total };
+    const totalPages = Math.ceil(total / perPage);
+
+    return { entities, total, totalPages };
   }
 }

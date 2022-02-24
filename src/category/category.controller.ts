@@ -15,7 +15,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CustomValidationPipe } from '../common/pipes/custom-validation.pipe';
 import { Roles } from '../common/decorators/roles.decorator';
 import { UserRole } from '../user/enums/user-role.enum';
-import { JwtAuthGuard } from '../auth/passport/jwt/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 
 @Controller('categories')

@@ -13,7 +13,7 @@ import {
 
 import { User } from '../user/entities/user.entity';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
-import { JwtAuthGuard } from '../auth/passport/jwt/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Comment } from './entities/comment.entity';
 import { CommentService } from './comment.service';
 import { GetCommentsParamsDto } from './dto/get-comments-params.dto';

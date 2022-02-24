@@ -1,7 +1,11 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ExtractJwt, StrategyOptions } from 'passport-jwt';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { CoreModule } from './core/core.module';
@@ -11,7 +15,8 @@ import { CategoryModule } from './category/category.module';
 import { QuestionModule } from './question/question.module';
 import { CommentModule } from './comment/comment.module';
 import { DATABASE_CONFIG } from './config/database-config';
-import { JwtStrategy } from './auth/passport/jwt/jwt.strategy';
+import { AuthMiddleware } from './auth/middleware/auth.middleware';
+import { User } from './user/entities/user.entity';
 
 @Module({
   imports: [
@@ -21,6 +26,7 @@ import { JwtStrategy } from './auth/passport/jwt/jwt.strategy';
       useFactory: (configService: ConfigService) =>
         configService.get(DATABASE_CONFIG),
     }),
+    TypeOrmModule.forFeature([User]),
     EventEmitterModule.forRoot(),
     AuthModule,
     UserModule,
@@ -29,19 +35,12 @@ import { JwtStrategy } from './auth/passport/jwt/jwt.strategy';
     CommentModule,
   ],
   controllers: [],
-  providers: [
-    {
-      inject: [ConfigService],
-      provide: JwtStrategy,
-      useFactory: (configService: ConfigService) => {
-        const options: StrategyOptions = {
-          jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-          ignoreExpiration: false,
-          secretOrKey: configService.get('JWT_SECRET'),
-        };
-        return new JwtStrategy(options);
-      },
-    },
-  ],
+  providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): any {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes({ method: RequestMethod.ALL, path: '*' });
+  }
+}

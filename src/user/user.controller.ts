@@ -9,7 +9,7 @@ import {
 
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
-import { JwtAuthGuard } from '../auth/passport/jwt/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { UserRole } from './enums/user-role.enum';

@@ -17,7 +17,7 @@ import { PaginationResultInterface } from '../pagination/interfaces';
 import { CustomValidationPipe } from '../common/pipes/custom-validation.pipe';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { GetQuestionsParamsDto } from './dto/get-questions-params.dto';
-import { JwtAuthGuard } from '../auth/passport/jwt/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @Controller('questions')

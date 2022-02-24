@@ -15,7 +15,7 @@ import { Question } from '../../question/entities/question.entity';
 import { User } from '../../user/entities/user.entity';
 import { CommentLike } from '../../like/entities/comment-like.entity';
 
-@Entity({ name: 'comments', orderBy: { id: 'DESC' } })
+@Entity({ name: 'comments' })
 export class Comment {
   @PrimaryGeneratedColumn()
   id: number;

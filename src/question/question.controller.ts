@@ -34,10 +34,12 @@ export class QuestionController {
 
   @Get(':id')
   findOne(
+    @CurrentUser()
+    currentUser: User,
     @Param('id')
     questionId: string,
   ): Promise<Question> {
-    return this.questionService.findOne(questionId);
+    return this.questionService.findOne(currentUser, questionId);
   }
 
   @UseGuards(JwtAuthGuard)

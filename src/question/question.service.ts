@@ -16,6 +16,7 @@ import { CreateQuestionDto } from './dto/create-question.dto';
 import { PaginationParamsDto } from '../pagination/dto/pagination-params.dto';
 import { PaginationResultInterface } from '../pagination/interfaces';
 import { PaginationService } from '../pagination/pagination.service';
+import { UserRole } from '../user/enums/user-role.enum';
 
 @Injectable()
 export class QuestionService {
@@ -59,10 +60,27 @@ export class QuestionService {
     return this.paginationService.paginate(queryBuilder, paginationParams);
   }
 
-  async findOne(questionId: string): Promise<Question> {
-    const question = await this.questionRepository.findOne(questionId, {
-      relations: ['category', 'user', 'likes', 'comments'],
-    });
+  async findOne(currentUser: User, questionId: string): Promise<Question> {
+    const queryBuilder = this.questionRepository
+      .createQueryBuilder('questions')
+      .leftJoinAndSelect('questions.category', 'category')
+      .leftJoinAndSelect('questions.likes', 'questionLike')
+      .loadRelationCountAndMap(
+        'questions.commentsCount',
+        'questions.comments',
+        '_',
+        (qb) => qb.withDeleted(),
+      )
+      .withDeleted()
+      .leftJoinAndSelect('questionLike.user', 'questionLikeUser')
+      .leftJoinAndSelect('questions.user', 'user')
+      .where('questions.id = :questionId', { questionId });
+
+    if (currentUser?.role !== UserRole.ADMIN) {
+      queryBuilder.andWhere('user.deletedAt IS NULL');
+    }
+
+    const question = await queryBuilder.getOne();
 
     if (!question) {
       throw new NotFoundException();

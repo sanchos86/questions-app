@@ -57,6 +57,7 @@ export class AuthService {
   async register(registerDto: RegisterDto): Promise<void> {
     const existingUser = await this.userRepository.findOne({
       where: { email: registerDto.email },
+      withDeleted: true,
     });
 
     if (existingUser) {

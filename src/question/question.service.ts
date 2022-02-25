@@ -33,17 +33,28 @@ export class QuestionService {
   ) {}
 
   findAll(
+    currentUser: User,
     params: GetQuestionsParamsDto,
   ): Promise<PaginationResultInterface<Question>> {
     const { page } = params;
     const paginationParams: PaginationParamsDto = { page };
     const queryBuilder = this.questionRepository
       .createQueryBuilder('questions')
+      .leftJoinAndSelect('questions.category', 'category')
+      .leftJoinAndSelect('questions.likes', 'questionLike')
+      .loadRelationCountAndMap(
+        'questions.commentsCount',
+        'questions.comments',
+        '_',
+        (qb) => qb.withDeleted(),
+      )
       .withDeleted()
-      .leftJoinAndSelect('questions.user', 'user')
-      .leftJoinAndSelect('questions.likes', 'like')
-      .leftJoinAndSelect('like.user', 'likeUser')
-      .where('user.deletedAt is null');
+      .leftJoinAndSelect('questionLike.user', 'questionLikeUser')
+      .leftJoinAndSelect('questions.user', 'user');
+
+    if (currentUser?.role !== UserRole.ADMIN) {
+      queryBuilder.where('user.deletedAt IS NULL');
+    }
 
     if (params.categoryId) {
       queryBuilder.andWhere('questions.categoryId = :categoryId', {

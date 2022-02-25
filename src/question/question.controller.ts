@@ -1,14 +1,4 @@
-import {
-  Get,
-  Post,
-  Controller,
-  Param,
-  Body,
-  Query,
-  UseGuards,
-  ValidationPipe,
-  Delete,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards, ValidationPipe } from '@nestjs/common';
 
 import { User } from '../user/entities/user.entity';
 import { Question } from './entities/question.entity';
@@ -19,6 +9,9 @@ import { CreateQuestionDto } from './dto/create-question.dto';
 import { GetQuestionsParamsDto } from './dto/get-questions-params.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
+import { UserRole } from '../user/enums/user-role.enum';
 
 @Controller('questions')
 export class QuestionController {
@@ -26,10 +19,12 @@ export class QuestionController {
 
   @Get()
   findAll(
+    @CurrentUser()
+    currentUser: User,
     @Query(new ValidationPipe({ transform: true }))
     params: GetQuestionsParamsDto,
   ): Promise<PaginationResultInterface<Question>> {
-    return this.questionService.findAll(params);
+    return this.questionService.findAll(currentUser, params);
   }
 
   @Get(':id')
@@ -42,8 +37,9 @@ export class QuestionController {
     return this.questionService.findOne(currentUser, questionId);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
+  @Roles(UserRole.AUTHOR)
   create(
     @CurrentUser() currentUser: User,
     @Body(new CustomValidationPipe({ stopAtFirstError: true }))
@@ -52,8 +48,9 @@ export class QuestionController {
     return this.questionService.create(currentUser.id, createQuestionDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post(':id/like')
+  @Roles(UserRole.AUTHOR)
   like(
     @CurrentUser()
     currentUser: User,
@@ -63,8 +60,9 @@ export class QuestionController {
     return this.questionService.like(currentUser.id, questionId);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id/like')
+  @Roles(UserRole.AUTHOR)
   dislike(
     @CurrentUser()
     currentUser: User,

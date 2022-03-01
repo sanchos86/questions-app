@@ -1,5 +1,7 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Res } from '@nestjs/common';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 import { AuthService } from './auth.service';
 import { LoginResponseInterface } from './interfaces';
@@ -9,15 +11,35 @@ import { CustomValidationPipe } from '../common/pipes/custom-validation.pipe';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @UseGuards(ThrottlerGuard)
   @Post('login')
-  login(
+  async login(
     @Body(new CustomValidationPipe({ stopAtFirstError: true }))
     loginDto: LoginDto,
-  ): Promise<LoginResponseInterface> {
-    return this.authService.login(loginDto);
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<Pick<LoginResponseInterface, 'id'>> {
+    const { accessToken, id } = await this.authService.login(loginDto);
+    response
+      .cookie(this.configService.get('JWT_TOKEN_COOKIE_NAME'), accessToken, {
+        httpOnly: true,
+        maxAge: Number(this.configService.get('JWT_EXPIRES_IN')),
+      })
+      .cookie(
+        this.configService.get('JWT_EXPIRES_IN_COOKIE_NAME'),
+        this.configService.get('JWT_EXPIRES_IN'),
+        {
+          maxAge: Number(this.configService.get('JWT_EXPIRES_IN')),
+        },
+      )
+      .cookie(this.configService.get('JWT_USER_ID_COOKIE_NAME'), id, {
+        maxAge: Number(this.configService.get('JWT_EXPIRES_IN')),
+      });
+    return { id };
   }
 
   @UseGuards(ThrottlerGuard)

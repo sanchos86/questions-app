@@ -15,6 +15,7 @@ const corsOptions: CorsOptions = {
     }
     callback(null, allowedOrigins);
   },
+  credentials: true,
 };
 
 export { corsOptions };

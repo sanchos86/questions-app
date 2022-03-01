@@ -51,7 +51,7 @@ export class AuthService {
     }
 
     const accessToken = this.signJwt(user);
-    return { accessToken };
+    return { accessToken, id: user.id };
   }
 
   async register(registerDto: RegisterDto): Promise<void> {

@@ -50,4 +50,19 @@ export class AuthController {
   ): Promise<void> {
     return this.authService.register(registerDto);
   }
+
+  @Post('sign-out')
+  signOut(@Res({ passthrough: true }) response: Response): void {
+    const jwtTokenCookieName = this.configService.get('JWT_TOKEN_COOKIE_NAME');
+    const jwtExpiresInCookieName = this.configService.get(
+      'JWT_EXPIRES_IN_COOKIE_NAME',
+    );
+    const jwtUserIdCookieName = this.configService.get(
+      'JWT_USER_ID_COOKIE_NAME',
+    );
+    response
+      .clearCookie(jwtTokenCookieName)
+      .clearCookie(jwtExpiresInCookieName)
+      .clearCookie(jwtUserIdCookieName);
+  }
 }

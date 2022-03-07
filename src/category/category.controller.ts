@@ -7,6 +7,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { Category } from './entities/category.entity';
 import { CategoryService } from './category.service';
@@ -18,6 +19,7 @@ import { UserRole } from '../user/enums/user-role.enum';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 
+@ApiTags('categories')
 @Controller('categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}

@@ -2,6 +2,7 @@ import { Body, Controller, Post, UseGuards, Res } from '@nestjs/common';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { LoginResponseInterface } from './interfaces';
@@ -9,6 +10,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { CustomValidationPipe } from '../common/pipes/custom-validation.pipe';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(

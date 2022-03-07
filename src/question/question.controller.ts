@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+  ValidationPipe,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { User } from '../user/entities/user.entity';
 import { Question } from './entities/question.entity';
@@ -13,6 +24,7 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { UserRole } from '../user/enums/user-role.enum';
 
+@ApiTags('questions')
 @Controller('questions')
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}

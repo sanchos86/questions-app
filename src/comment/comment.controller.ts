@@ -10,6 +10,7 @@ import {
   ValidationPipe,
   Delete,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { User } from '../user/entities/user.entity';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -21,6 +22,7 @@ import { PaginationResultInterface } from '../pagination/interfaces';
 import { CustomValidationPipe } from '../common/pipes/custom-validation.pipe';
 import { CreateCommentDto } from './dto/create-comment.dto';
 
+@ApiTags('comments')
 @Controller('comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}

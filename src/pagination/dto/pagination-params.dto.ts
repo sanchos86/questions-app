@@ -1,9 +1,12 @@
 import { Type } from 'class-transformer';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class PaginationParamsDto {
+  @ApiPropertyOptional()
   @Type(() => Number)
-  page?: number;
+  readonly page?: number;
 
+  @ApiPropertyOptional()
   @Type(() => Number)
-  perPage?: number;
+  readonly perPage?: number;
 }

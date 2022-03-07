@@ -6,6 +6,7 @@ import {
   ValidationPipe,
   Query,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
@@ -17,6 +18,7 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { PaginationResultInterface } from '../pagination/interfaces';
 import { GetUsersParamsDto } from './dto/get-users-params.dto';
 
+@ApiTags('users')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}

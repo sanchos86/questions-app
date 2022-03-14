@@ -25,6 +25,9 @@
     "db:migrate": "npm run typeorm:dev migration:run",
     "db:revert": "npm run typeorm:dev migration:revert"
   },
+  "engines": {
+    "node": "14.x"
+  },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^1.2.0",

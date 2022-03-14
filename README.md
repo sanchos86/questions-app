@@ -3,6 +3,5 @@
 ### Database schema
 ![Database schema](./database-schema.png)
 
-### Features
-- ...
-- ...
+### Work in progress
+[Swagger](https://infinite-hollows-30973.herokuapp.com/swagger/)

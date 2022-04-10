@@ -19,5 +19,8 @@ export default registerAs(
     cli: {
       migrationsDir: 'src/migrations',
     },
+    ssl: {
+      rejectUnauthorized: process.env.NODE_ENV === 'production',
+    },
   }),
 );

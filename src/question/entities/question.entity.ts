@@ -21,10 +21,10 @@ export class Question {
   @Column()
   title: string;
 
-  @Column({ type: 'longtext', comment: 'Question text without html tags' })
+  @Column({ type: 'text', comment: 'Question text without html tags' })
   plainText: string;
 
-  @Column({ type: 'longtext', comment: 'Question text with html tags' })
+  @Column({ type: 'text', comment: 'Question text with html tags' })
   formattedText: string;
 
   @Column({

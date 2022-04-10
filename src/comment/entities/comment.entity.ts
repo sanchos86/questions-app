@@ -20,7 +20,7 @@ export class Comment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'longtext' })
+  @Column({ type: 'text' })
   text: string;
 
   @DeleteDateColumn({ nullable: true, default: null })

@@ -39,7 +39,7 @@ export class UserController {
     @CurrentUser()
     currentUser: User,
     @Param('id')
-    userId: string,
+    userId: number,
   ): Promise<User> {
     return this.userService.findOne(currentUser.id, currentUser.role, userId);
   }

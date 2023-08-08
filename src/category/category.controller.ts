@@ -32,7 +32,7 @@ export class CategoryController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(':id')
   @Roles(UserRole.ADMIN)
-  findOne(@Param('id') categoryId: string): Promise<Category> {
+  findOne(@Param('id') categoryId: number): Promise<Category> {
     return this.categoryService.findOne(categoryId);
   }
 
@@ -50,7 +50,7 @@ export class CategoryController {
   @Put(':id')
   @Roles(UserRole.ADMIN)
   update(
-    @Param('id') categoryId: string,
+    @Param('id') categoryId: number,
     @Body(new CustomValidationPipe({ stopAtFirstError: true }))
     updateCategoryDto: UpdateCategoryDto,
   ): Promise<Category> {

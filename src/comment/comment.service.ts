@@ -61,11 +61,13 @@ export class CommentService {
     currentUserId: number,
     createCommentDto: CreateCommentDto,
   ): Promise<Comment> {
-    const user = await this.userRepository.findOne(currentUserId);
-    const question = await this.questionRepository.findOne(
-      createCommentDto.questionId,
-      { relations: ['user'] },
-    );
+    const user = await this.userRepository.findOneBy({
+      id: currentUserId,
+    });
+    const question = await this.questionRepository.findOne({
+      relations: ['user'],
+      where: { id: createCommentDto.questionId },
+    });
     let parentComment: Comment;
 
     if (!question) {
@@ -79,9 +81,9 @@ export class CommentService {
     }
 
     if (createCommentDto.parentCommentId) {
-      parentComment = await this.commentRepository.findOne(
-        createCommentDto.parentCommentId,
-      );
+      parentComment = await this.commentRepository.findOneBy({
+        id: createCommentDto.parentCommentId,
+      });
 
       if (!parentComment) {
         throw new BadRequestException('Invalid parent comment');
@@ -101,8 +103,9 @@ export class CommentService {
     return this.commentRepository.save(comment);
   }
 
-  async delete(currentUserId: number, commentId: string): Promise<void> {
-    const comment = await this.commentRepository.findOne(commentId, {
+  async delete(currentUserId: number, commentId: number): Promise<void> {
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId },
       relations: ['user'],
     });
 
@@ -119,8 +122,9 @@ export class CommentService {
     await this.commentRepository.softRemove(comment);
   }
 
-  async like(currentUserId: number, commentId: string): Promise<void> {
-    const comment = await this.commentRepository.findOne(commentId, {
+  async like(currentUserId: number, commentId: number): Promise<void> {
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId },
       relations: ['user', 'likes'],
     });
 
@@ -142,7 +146,9 @@ export class CommentService {
       throw new ForbiddenException('You have already liked current comment');
     }
 
-    const user = await this.userRepository.findOne(currentUserId);
+    const user = await this.userRepository.findOneBy({
+      id: currentUserId,
+    });
 
     const commentLike = this.commentLikeRepository.create({
       comment,
@@ -151,8 +157,9 @@ export class CommentService {
     await this.commentLikeRepository.save(commentLike);
   }
 
-  async dislike(currentUserId: number, commentId: string): Promise<void> {
-    const comment = await this.commentRepository.findOne(commentId, {
+  async dislike(currentUserId: number, commentId: number): Promise<void> {
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId },
       relations: ['likes'],
     });
 

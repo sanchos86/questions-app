@@ -67,7 +67,7 @@ export class QuestionController {
     @CurrentUser()
     currentUser: User,
     @Param('id')
-    questionId: string,
+    questionId: number,
   ): Promise<void> {
     return this.questionService.like(currentUser.id, questionId);
   }
@@ -79,7 +79,7 @@ export class QuestionController {
     @CurrentUser()
     currentUser: User,
     @Param('id')
-    questionId: string,
+    questionId: number,
   ): Promise<void> {
     return this.questionService.dislike(currentUser.id, questionId);
   }

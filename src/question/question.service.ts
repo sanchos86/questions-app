@@ -104,10 +104,12 @@ export class QuestionService {
     currentUserId: number,
     createQuestionDto: CreateQuestionDto,
   ): Promise<Question> {
-    const user = await this.userRepository.findOne(currentUserId);
-    const category = await this.categoryRepository.findOne(
-      createQuestionDto.categoryId,
-    );
+    const user = await this.userRepository.findOneBy({
+      id: currentUserId,
+    });
+    const category = await this.categoryRepository.findOneBy({
+      id: createQuestionDto.categoryId,
+    });
 
     if (!category) {
       throw new BadRequestException('Invalid category');
@@ -122,8 +124,9 @@ export class QuestionService {
     return this.questionRepository.save(question);
   }
 
-  async like(currentUserId: number, questionId: string): Promise<void> {
-    const question = await this.questionRepository.findOne(questionId, {
+  async like(currentUserId: number, questionId: number): Promise<void> {
+    const question = await this.questionRepository.findOne({
+      where: { id: questionId },
       relations: ['user', 'likes'],
     });
 
@@ -145,7 +148,9 @@ export class QuestionService {
       throw new ForbiddenException('You have already liked current question');
     }
 
-    const user = await this.userRepository.findOne(currentUserId);
+    const user = await this.userRepository.findOneBy({
+      id: currentUserId,
+    });
 
     const questionLike = this.questionLikeRepository.create({
       question,
@@ -154,8 +159,9 @@ export class QuestionService {
     await this.questionLikeRepository.save(questionLike);
   }
 
-  async dislike(currentUserId: number, questionId: string): Promise<void> {
-    const question = await this.questionRepository.findOne(questionId, {
+  async dislike(currentUserId: number, questionId: number): Promise<void> {
+    const question = await this.questionRepository.findOne({
+      where: { id: questionId },
       relations: ['likes'],
     });
 

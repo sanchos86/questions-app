@@ -84,13 +84,15 @@ export class UserService {
   async findOne(
     currentUserId: number,
     currentUserRole: string,
-    userId: string,
+    userId: number,
   ): Promise<User> {
     if (
       currentUserId === Number(userId) ||
       currentUserRole === UserRole.ADMIN
     ) {
-      const user = await this.userRepository.findOne(userId);
+      const user = await this.userRepository.findOneBy({
+        id: userId,
+      });
 
       if (!user) {
         throw new NotFoundException();

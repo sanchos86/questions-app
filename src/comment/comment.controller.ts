@@ -50,7 +50,7 @@ export class CommentController {
   @Patch(':id')
   delete(
     @CurrentUser() currentUser: User,
-    @Param('id') commentId: string,
+    @Param('id') commentId: number,
   ): Promise<void> {
     return this.commentService.delete(currentUser.id, commentId);
   }
@@ -61,7 +61,7 @@ export class CommentController {
     @CurrentUser()
     currentUser: User,
     @Param('id')
-    commentId: string,
+    commentId: number,
   ): Promise<void> {
     return this.commentService.like(currentUser.id, commentId);
   }
@@ -72,7 +72,7 @@ export class CommentController {
     @CurrentUser()
     currentUser: User,
     @Param('id')
-    commentId: string,
+    commentId: number,
   ): Promise<void> {
     return this.commentService.dislike(currentUser.id, commentId);
   }

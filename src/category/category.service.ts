@@ -27,8 +27,10 @@ export class CategoryService {
     return this.categoryRepository.find();
   }
 
-  async findOne(categoryId: string): Promise<Category> {
-    const category = await this.categoryRepository.findOne(categoryId);
+  async findOne(categoryId: number): Promise<Category> {
+    const category = await this.categoryRepository.findOneBy({
+      id: categoryId,
+    });
 
     if (!category) {
       throw new NotFoundException();
@@ -50,10 +52,12 @@ export class CategoryService {
   }
 
   async update(
-    categoryId: string,
+    categoryId: number,
     updateCategoryDto: UpdateCategoryDto,
   ): Promise<Category> {
-    const category = await this.categoryRepository.findOne(categoryId);
+    const category = await this.categoryRepository.findOneBy({
+      id: categoryId,
+    });
 
     if (!category) {
       throw new NotFoundException();

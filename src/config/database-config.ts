@@ -1,12 +1,12 @@
 import { join } from 'path';
 import { registerAs } from '@nestjs/config';
-import { ConnectionOptions } from 'typeorm';
+import type { DataSourceOptions } from 'typeorm';
 
 export const DATABASE_CONFIG = 'DATABASE_CONFIG';
 
 export default registerAs(
   DATABASE_CONFIG,
-  (): ConnectionOptions => ({
+  (): DataSourceOptions => ({
     type: 'postgres',
     host: process.env.POSTGRES_HOST,
     port: +process.env.POSTGRES_PORT,
@@ -16,11 +16,5 @@ export default registerAs(
     synchronize: false,
     entities: [join(__dirname, './../**/*.entity{.ts,.js}')],
     migrations: [join(__dirname, './../migrations/**/*{.ts,.js}')],
-    cli: {
-      migrationsDir: 'src/migrations',
-    },
-    ssl: {
-      rejectUnauthorized: process.env.NODE_ENV === 'production',
-    },
   }),
 );
